@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+RELEASE_NAME=raylib-6.0_macos
+
+log() {
+    printf '  \033[32m>\033[0m %s\n' "$1"
+}
+
+if [ ! -d "${RELEASE_NAME}" ]; then
+    log "Getting raylib for macos..."
+    curl -LO --fail https://github.com/raysan5/raylib/releases/download/6.0/${RELEASE_NAME}.tar.gz
+    tar -xf "${RELEASE_NAME}.tar.gz"
+    log "Cleanup ${RELEASE_NAME}.tar.gz"
+    rm -f "${RELEASE_NAME}.tar.gz"
+fi
+
+INCLUDE="-I./${RELEASE_NAME}/include"
+FRAMEWORKS="-framework IOKit -framework Cocoa -framework OpenGL"
+LIBS="-L./${RELEASE_NAME}/lib -lraylib"
+RPATH="-Wl,-rpath,./${RELEASE_NAME}/lib"
+FLAGS="-Wall -Wextra -Werror -std=c++26"
+
+ENABLE_VERTICES="${ENABLE_VERTICES:-0}"
+
+log "Compiling (ENABLE_VERTICES=${ENABLE_VERTICES})..."
+clang++ main.cpp \
+-DENABLE_VERTICES=${ENABLE_VERTICES} \
+${INCLUDE} \
+${FRAMEWORKS} \
+${LIBS} \
+${RPATH} \
+${FLAGS}
+log "Saved executable to a.out"
