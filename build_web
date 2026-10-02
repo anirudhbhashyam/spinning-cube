@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+RELEASE_NAME="raylib-6.0_webassembly"
+OUT_PATH="docs"
+
+log() {
+    printf '  \033[32m>\033[0m %s\n' "$1"
+}
+
+if [ ! -d "${RELEASE_NAME}" ]; then
+    log "Getting raylib webassembly build..."
+    curl -LO --fail https://github.com/raysan5/raylib/releases/download/6.0/${RELEASE_NAME}.zip
+    tar -xf "${RELEASE_NAME}.zip"
+    log "Cleanup ${RELEASE_NAME}.zip"
+    rm -f "${RELEASE_NAME}.zip"
+fi
+
+INCLUDE="-I./${RELEASE_NAME}/include"
+LIBS="./${RELEASE_NAME}/lib/libraylib.web.a"
+FLAGS="-std=c++26"
+
+if [[ ! -d "${OUT_PATH}" ]]; then
+    log "Creating ${OUT_PATH}..."
+    mkdir "${OUT_PATH}"
+fi
+
+em++ main.cpp \
+${INCLUDE} \
+${LIBS} \
+${RPATH} \
+${FLAGS} \
+-s USE_GLFW=3 \
+-s ASYNCIFY \
+-Os \
+--shell-file shell.html \
+-o "${OUT_PATH}/index.html"
+
+log "Compiled."
