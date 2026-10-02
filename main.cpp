@@ -187,5 +187,6 @@ i32 main() {
             }
         EndDrawing();
     }
+    CloseWindow();
     return 0;
 }
