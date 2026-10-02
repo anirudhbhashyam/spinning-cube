@@ -3,7 +3,6 @@
 #include <array>
 #include <numbers>
 #include <cmath>
-#include "raylib-6.0_macos/include/raylib.h"
 #include "raylib.h"
 
 #ifndef ENABLE_VERTICES
